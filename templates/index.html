@@ -8,16 +8,16 @@
 <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
+{% set show_admin_link = true %}
+{% include "_topbar.html" %}
 <div class="layout">
   <aside class="sidebar">
     <div class="brand">内部导航</div>
-    {% include "_theme_switcher.html" %}
     <nav class="cat-nav" id="catNav">
       {% for g in groups %}
       <a href="#cat-{{ g.category.id }}" class="cat-link" data-target="cat-{{ g.category.id }}">{{ g.category.name }}</a>
       {% endfor %}
     </nav>
-    <a href="/admin" class="admin-link">管理后台</a>
   </aside>
 
   <main class="content">

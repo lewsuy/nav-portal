@@ -1,11 +1,22 @@
-<div class="theme-switcher" role="group" aria-label="主题切换">
-  <button type="button" class="theme-opt" data-theme-option="light" title="亮色">
-    <span class="theme-icon">☀️</span>亮色
+<div class="theme-dropdown">
+  <button type="button" class="theme-trigger" id="themeTrigger" aria-haspopup="true" aria-expanded="false" title="主题">
+    <span class="theme-trigger-icon">☀️</span>
   </button>
-  <button type="button" class="theme-opt" data-theme-option="dark" title="暗色">
-    <span class="theme-icon">🌙</span>暗色
-  </button>
-  <button type="button" class="theme-opt" data-theme-option="system" title="跟随系统">
-    <span class="theme-icon">💻</span>系统
-  </button>
+  <div class="theme-menu" id="themeMenu">
+    <button type="button" class="theme-menu-item" data-theme-option="light">
+      <span class="theme-menu-icon">☀️</span>
+      <span class="theme-menu-label">Light</span>
+      <span class="theme-check">✓</span>
+    </button>
+    <button type="button" class="theme-menu-item" data-theme-option="dark">
+      <span class="theme-menu-icon">🌙</span>
+      <span class="theme-menu-label">Dark</span>
+      <span class="theme-check">✓</span>
+    </button>
+    <button type="button" class="theme-menu-item" data-theme-option="system">
+      <span class="theme-menu-icon">💻</span>
+      <span class="theme-menu-label">System</span>
+      <span class="theme-check">✓</span>
+    </button>
+  </div>
 </div>

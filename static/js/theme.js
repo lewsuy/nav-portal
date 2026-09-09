@@ -1,5 +1,6 @@
 (function () {
   var STORAGE_KEY = "nav-theme"; // 'light' | 'dark' | 'system'
+  var ICONS = { light: "☀️", dark: "🌙", system: "💻" };
 
   function systemTheme() {
     return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches
@@ -20,10 +21,12 @@
     document.documentElement.setAttribute("data-theme", effective);
   }
 
-  function syncButtons(pref) {
-    var buttons = document.querySelectorAll("[data-theme-option]");
-    buttons.forEach(function (btn) {
+  function syncUI(pref) {
+    document.querySelectorAll(".theme-menu-item").forEach(function (btn) {
       btn.classList.toggle("active", btn.getAttribute("data-theme-option") === pref);
+    });
+    document.querySelectorAll(".theme-trigger-icon").forEach(function (icon) {
+      icon.textContent = ICONS[pref] || ICONS.system;
     });
   }
 
@@ -32,18 +35,46 @@
       localStorage.setItem(STORAGE_KEY, pref);
     } catch (e) {}
     applyEffectiveTheme(pref);
-    syncButtons(pref);
+    syncUI(pref);
+  }
+
+  function closeAllMenus() {
+    document.querySelectorAll(".theme-menu.open").forEach(function (menu) {
+      menu.classList.remove("open");
+    });
+    document.querySelectorAll('.theme-trigger[aria-expanded="true"]').forEach(function (trigger) {
+      trigger.setAttribute("aria-expanded", "false");
+    });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
     var pref = getPreference();
-    syncButtons(pref);
+    syncUI(pref);
 
-    var buttons = document.querySelectorAll("[data-theme-option]");
-    buttons.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        setPreference(btn.getAttribute("data-theme-option"));
+    document.querySelectorAll(".theme-trigger").forEach(function (trigger) {
+      trigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var menu = trigger.parentElement.querySelector(".theme-menu");
+        var wasOpen = menu.classList.contains("open");
+        closeAllMenus();
+        if (!wasOpen) {
+          menu.classList.add("open");
+          trigger.setAttribute("aria-expanded", "true");
+        }
       });
+    });
+
+    document.querySelectorAll(".theme-menu-item").forEach(function (item) {
+      item.addEventListener("click", function (e) {
+        e.stopPropagation();
+        setPreference(item.getAttribute("data-theme-option"));
+        closeAllMenus();
+      });
+    });
+
+    document.addEventListener("click", closeAllMenus);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeAllMenus();
     });
   });
 
