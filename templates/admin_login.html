@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>管理后台登录</title>
+{% include "_theme_init.html" %}
 <link rel="stylesheet" href="/static/css/style.css">
 <style>
   body { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+  .login-theme-switcher { position: fixed; top: 20px; right: 20px; width: 160px; }
   .login-box {
     width: 320px;
     background: var(--panel);
@@ -31,6 +33,9 @@
 </style>
 </head>
 <body>
+  <div class="login-theme-switcher">
+    {% include "_theme_switcher.html" %}
+  </div>
   <div class="login-box">
     <h1>管理后台登录</h1>
     {% if error %}<div class="error">{{ error }}</div>{% endif %}
@@ -42,5 +47,6 @@
       <button type="submit">登录</button>
     </form>
   </div>
+  <script src="/static/js/theme.js"></script>
 </body>
 </html>

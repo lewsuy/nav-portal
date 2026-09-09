@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>内部导航</title>
+{% include "_theme_init.html" %}
 <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar">
     <div class="brand">内部导航</div>
+    {% include "_theme_switcher.html" %}
     <nav class="cat-nav" id="catNav">
       {% for g in groups %}
       <a href="#cat-{{ g.category.id }}" class="cat-link" data-target="cat-{{ g.category.id }}">{{ g.category.name }}</a>
@@ -47,6 +49,7 @@
   </main>
 </div>
 
+<script src="/static/js/theme.js"></script>
 <script src="/static/js/main.js"></script>
 </body>
 </html>

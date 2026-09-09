@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>管理后台</title>
+{% include "_theme_init.html" %}
 <link rel="stylesheet" href="/static/css/style.css">
 <link rel="stylesheet" href="/static/css/admin.css">
 </head>
@@ -11,6 +12,7 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="brand">内部导航 · 后台</div>
+    {% include "_theme_switcher.html" %}
     <nav class="cat-nav">
       <a href="/" class="cat-link">← 返回前台</a>
       <a href="#" class="cat-link" id="changePwdBtn">修改密码</a>
@@ -118,6 +120,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="/static/js/theme.js"></script>
 <script src="/static/js/admin.js"></script>
 </body>
 </html>

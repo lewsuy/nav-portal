@@ -1,0 +1,11 @@
+<script>
+(function () {
+  try {
+    var pref = localStorage.getItem("nav-theme") || "system";
+    var effective = pref === "system"
+      ? ((window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark")
+      : pref;
+    document.documentElement.setAttribute("data-theme", effective);
+  } catch (e) {}
+})();
+</script>
