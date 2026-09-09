@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>管理后台</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">内部导航 · 后台</div>
+    <nav class="cat-nav">
+      <a href="/" class="cat-link">← 返回前台</a>
+      <a href="#" class="cat-link" id="changePwdBtn">修改密码</a>
+      <a href="/admin/logout" class="cat-link">退出登录</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <div class="admin-header">
+      <h1>分类与网址管理</h1>
+      <button class="btn-primary" id="addCategoryBtn">+ 新建分类</button>
+    </div>
+
+    <div id="categoryList">
+      {% for g in groups %}
+      <div class="admin-cat" draggable="true" data-id="{{ g.category.id }}">
+        <div class="admin-cat-header">
+          <span class="drag-handle">⠿</span>
+          <span class="cat-title">{{ g.category.name }}</span>
+          <div class="cat-actions">
+            <button class="icon-btn add-link-btn">+ 网址</button>
+            <button class="icon-btn edit-cat-btn">编辑</button>
+            <button class="icon-btn danger delete-cat-btn">删除</button>
+          </div>
+        </div>
+        <ul class="link-list" data-cat-id="{{ g.category.id }}">
+          {% for link in g.links %}
+          <li class="link-item" draggable="true" data-id="{{ link.id }}">
+            <span class="drag-handle">⠿</span>
+            {% if link.icon %}
+            <img src="/static/{{ link.icon }}" alt="">
+            {% else %}
+            <div class="mini-avatar" style="background:{{ link.avatar_color }}">{{ link.avatar_char }}</div>
+            {% endif %}
+            <span class="link-name">{{ link.name }}</span>
+            <span class="link-url">{{ link.url }}</span>
+            <div class="link-actions">
+              <button class="icon-btn edit-link-btn">编辑</button>
+              <button class="icon-btn danger delete-link-btn">删除</button>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% if not g.links %}
+        <div class="empty-cat-hint">这个分类下还没有网址</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if not groups %}
+    <div class="empty-hint">还没有分类，先新建一个吧。</div>
+    {% endif %}
+  </main>
+</div>
+
+<!-- 新建/编辑分类 -->
+<div class="overlay" id="categoryModal">
+  <div class="modal">
+    <h3 id="categoryModalTitle">新建分类</h3>
+    <label>分类名称</label>
+    <input type="text" id="categoryNameInput" placeholder="例如：业务系统">
+    <div class="modal-actions">
+      <button class="btn-secondary" data-close>取消</button>
+      <button class="btn-primary" id="categorySaveBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新建/编辑网址 -->
+<div class="overlay" id="linkModal">
+  <div class="modal">
+    <h3 id="linkModalTitle">新建网址</h3>
+    <label>所属分类</label>
+    <select id="linkCategorySelect">
+      {% for g in groups %}
+      <option value="{{ g.category.id }}">{{ g.category.name }}</option>
+      {% endfor %}
+    </select>
+    <label>名称</label>
+    <input type="text" id="linkNameInput" placeholder="例如：监控面板">
+    <label>网址</label>
+    <input type="text" id="linkUrlInput" placeholder="例如：https://example.com">
+    <div class="modal-actions">
+      <button class="btn-secondary" data-close>取消</button>
+      <button class="btn-primary" id="linkSaveBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 修改密码 -->
+<div class="overlay" id="pwdModal">
+  <div class="modal">
+    <h3>修改密码</h3>
+    <form method="post" action="/admin/change-password">
+      <label>新密码（至少6位）</label>
+      <input type="password" name="new_password" required minlength="6">
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" data-close>取消</button>
+        <button type="submit" class="btn-primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/static/js/admin.js"></script>
+</body>
+</html>

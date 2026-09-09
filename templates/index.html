@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>内部导航</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">内部导航</div>
+    <nav class="cat-nav" id="catNav">
+      {% for g in groups %}
+      <a href="#cat-{{ g.category.id }}" class="cat-link" data-target="cat-{{ g.category.id }}">{{ g.category.name }}</a>
+      {% endfor %}
+    </nav>
+    <a href="/admin" class="admin-link">管理后台</a>
+  </aside>
+
+  <main class="content">
+    {% for g in groups %}
+    <section class="cat-section" id="cat-{{ g.category.id }}">
+      <h2>{{ g.category.name }}</h2>
+      {% if g.links %}
+      <div class="grid">
+        {% for link in g.links %}
+        <a class="card" href="{{ link.url }}" target="_blank" rel="noopener" title="{{ link.name }}">
+          {% if link.icon %}
+          <img src="/static/{{ link.icon }}" alt="" loading="lazy">
+          {% else %}
+          <div class="icon-fallback" style="background: {{ link.avatar_color }}">{{ link.avatar_char }}</div>
+          {% endif %}
+          <span class="card-name">{{ link.name }}</span>
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-hint">这个分类下还没有网址，去后台加一个吧。</div>
+      {% endif %}
+    </section>
+    {% endfor %}
+
+    {% if not groups %}
+    <div class="empty-hint">还没有任何分类，<a href="/admin" style="color:var(--accent)">去后台</a>创建第一个分类和网址。</div>
+    {% endif %}
+  </main>
+</div>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>
