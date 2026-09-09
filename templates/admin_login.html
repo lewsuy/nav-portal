@@ -7,27 +7,36 @@
 {% include "_theme_init.html" %}
 <link rel="stylesheet" href="/static/css/style.css">
 <style>
-  body { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+  body {
+    display:flex; align-items:center; justify-content:center; min-height:100vh;
+    background: radial-gradient(circle at 20% 20%, var(--bg-grad-a), transparent 55%),
+                radial-gradient(circle at 80% 80%, var(--bg-grad-b), transparent 55%),
+                var(--bg);
+  }
   .login-box {
     width: 320px;
     background: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 18px;
     padding: 32px 28px;
+    box-shadow: var(--shadow-md);
   }
-  .login-box h1 { font-size: 16px; margin: 0 0 20px; color: var(--text); font-weight: 600; }
+  .login-box h1 { font-size: 16px; margin: 0 0 20px; color: var(--text); font-weight: 700; }
   .login-box label { display:block; font-size: 12.5px; color: var(--text-dim); margin-bottom: 6px; }
   .login-box input {
-    width: 100%; padding: 9px 10px; margin-bottom: 16px;
-    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    width: 100%; padding: 10px 11px; margin-bottom: 16px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
     color: var(--text); font-size: 14px; font-family: var(--font);
   }
-  .login-box input:focus { outline: none; border-color: var(--accent-dim); }
+  .login-box input:focus { outline: none; border-color: var(--accent-dim); box-shadow: 0 0 0 3px var(--accent-soft); }
   .login-box button {
-    width: 100%; padding: 10px; border: none; border-radius: 8px;
-    background: var(--accent); color: #0d1117; font-weight: 600; font-size: 14px; cursor: pointer;
+    width: 100%; padding: 11px; border: none; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    color: #ffffff; font-weight: 700; font-size: 14px; cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.15s, transform 0.1s;
   }
-  .login-box button:hover { background: var(--accent-dim); }
+  .login-box button:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
   .error { color: var(--danger); font-size: 13px; margin-bottom: 14px; }
 </style>
 </head>

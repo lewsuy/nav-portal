@@ -10,7 +10,7 @@ from favicon import fetch_favicon
 app = Flask(__name__)
 app.secret_key = os.environ.get("NAV_SECRET_KEY") or os.urandom(32)
 
-AVATAR_COLORS = ["#4fd1c5", "#5b8def", "#9b7ede", "#e0a458", "#e2707e", "#67c98e"]
+AVATAR_COLORS = ["#6366f1", "#0ea5e9", "#8b5cf6", "#f59e0b", "#f472b6", "#10b981"]
 
 
 def avatar_style(name):
