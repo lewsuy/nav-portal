@@ -18,8 +18,8 @@ html[data-theme="light"] {
   --radius: 14px;
   --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
   --shadow-md: 0 10px 28px rgba(30, 34, 51, 0.08);
-  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font: "Microsoft YaHei", "微软雅黑", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
 }
 
 html[data-theme="dark"] {
@@ -149,28 +149,20 @@ a { color: inherit; text-decoration: none; }
 
 .sidebar-footer .cat-link-footer { flex: 1; min-width: 0; }
 
-/* 主题菜单方向：默认向下；空间不足时 JS 加 .flip-up 改为向上 */
+/* 侧边栏底部主题菜单：固定向上展开（footer 始终贴近卡片底部） */
 .sidebar-footer .theme-dropdown { position: static; }
 .sidebar-footer .theme-menu {
-  top: calc(100% + 8px);
-  bottom: auto;
-  right: 0;
-}
-.sidebar-footer .theme-menu.flip-up {
   top: auto;
   bottom: calc(100% + 8px);
+  right: 0;
 }
 .sidebar-footer .theme-menu::before {
   content: "";
   position: absolute;
-  top: -10px;
+  bottom: -10px;
   left: 0;
   right: 0;
   height: 10px;
-}
-.sidebar-footer .theme-menu.flip-up::before {
-  top: auto;
-  bottom: -10px;
 }
 
 .content {
