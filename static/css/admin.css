@@ -295,3 +295,57 @@
 }
 
 .success-close:hover { background: var(--card-strong); color: var(--text); }
+
+/* ---------- 网址弹窗：手动图标选择 ---------- */
+
+.icon-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.icon-preview {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  object-fit: contain;
+  background: var(--card-strong);
+  flex-shrink: 0;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.icon-preview.icon-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 16px;
+}
+
+.icon-picker input[type="text"] {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.icon-upload-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-strong);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.icon-upload-btn:hover { background: var(--border); }
+
+.icon-preview[hidden] { display: none; }

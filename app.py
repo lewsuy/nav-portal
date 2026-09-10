@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import db
-from favicon import fetch_favicon
+from favicon import fetch_favicon, download_icon, save_icon_bytes
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("NAV_SECRET_KEY") or os.urandom(32)
@@ -206,17 +206,45 @@ def reorder_categories():
 
 # ---------- 网址 API ----------
 
+def _link_payload():
+    """支持 JSON 与 multipart 两种提交方式，返回 (fields, icon_file)。"""
+    if (request.content_type or "").startswith("multipart/"):
+        return request.form.to_dict(), request.files.get("icon_file")
+    return (request.json or {}), None
+
+
+def _resolve_icon(icon_file, icon_url, url):
+    """手动图标优先：上传文件 > 图标地址 > 自动抓取。失败返回 (icon, error)。"""
+    if icon_file and icon_file.filename:
+        icon = save_icon_bytes(icon_file.read(), icon_file.filename)
+        if not icon:
+            return None, "图标文件保存失败"
+        return icon, None
+    if icon_url:
+        icon = download_icon(icon_url)
+        if not icon:
+            return None, "图标地址下载失败，请确认地址可访问"
+        return icon, None
+    return fetch_favicon(url), None
+
+
 @app.route("/admin/api/links", methods=["POST"])
 @login_required
 def create_link():
-    data = request.json or {}
-    name = data.get("name", "").strip()
-    url = data.get("url", "").strip()
-    category_id = data.get("category_id")
+    fields, icon_file = _link_payload()
+    name = (fields.get("name") or "").strip()
+    url = (fields.get("url") or "").strip()
+    icon_url = (fields.get("icon_url") or "").strip()
+    try:
+        category_id = int(fields.get("category_id"))
+    except (TypeError, ValueError):
+        category_id = None
     if not (name and url and category_id):
         return jsonify({"error": "名称、网址、分类不能为空"}), 400
 
-    icon = fetch_favicon(url)
+    icon, err = _resolve_icon(icon_file, icon_url, url)
+    if err:
+        return jsonify({"error": err}), 400
 
     conn = db.get_db()
     max_order = conn.execute(
@@ -236,17 +264,27 @@ def create_link():
 @app.route("/admin/api/links/<int:link_id>", methods=["PUT"])
 @login_required
 def update_link(link_id):
-    data = request.json or {}
-    name = data.get("name", "").strip()
-    url = data.get("url", "").strip()
+    fields, icon_file = _link_payload()
+    name = (fields.get("name") or "").strip()
+    url = (fields.get("url") or "").strip()
+    icon_url = (fields.get("icon_url") or "").strip()
     if not (name and url):
         return jsonify({"error": "名称、网址不能为空"}), 400
 
     conn = db.get_db()
     old = conn.execute("SELECT * FROM links WHERE id = ?", (link_id,)).fetchone()
-    icon = old["icon"]
-    if old and old["url"] != url:
+    if not old:
+        conn.close()
+        return jsonify({"error": "网址不存在"}), 404
+    if icon_file and icon_file.filename or icon_url:
+        icon, err = _resolve_icon(icon_file, icon_url, url)
+        if err:
+            conn.close()
+            return jsonify({"error": err}), 400
+    elif old["url"] != url:
         icon = fetch_favicon(url)
+    else:
+        icon = old["icon"]
     conn.execute(
         "UPDATE links SET name = ?, url = ?, icon = ? WHERE id = ?",
         (name, url, icon, link_id),

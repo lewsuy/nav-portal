@@ -142,6 +142,15 @@
     <input type="text" id="linkNameInput" placeholder="例如：监控面板">
     <label>网址</label>
     <input type="text" id="linkUrlInput" placeholder="例如：https://example.com">
+    <label>图标（选填，抓取失败时可手动指定）</label>
+    <div class="icon-picker">
+      <img id="linkIconPreview" class="icon-preview" src="" alt="" hidden>
+      <div id="linkIconPlaceholder" class="icon-preview icon-placeholder">?</div>
+      <input type="text" id="linkIconUrlInput" placeholder="粘贴图标图片地址（http 开头）">
+      <label class="icon-upload-btn">上传
+        <input type="file" id="linkIconFileInput" accept="image/*" hidden>
+      </label>
+    </div>
     <div class="modal-actions">
       <button class="btn-secondary" data-close>取消</button>
       <button class="btn-primary" id="linkSaveBtn">保存</button>

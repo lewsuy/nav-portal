@@ -38,6 +38,23 @@ def _try_download(icon_url):
     return None
 
 
+def download_icon(icon_url):
+    """Download a user-specified icon image URL and store it locally."""
+    if not icon_url:
+        return None
+    icon_url = icon_url.strip()
+    if not icon_url.startswith(("http://", "https://")):
+        icon_url = "https://" + icon_url
+    return _try_download(icon_url)
+
+
+def save_icon_bytes(data, name="upload.png"):
+    """Store already-fetched image bytes (e.g. an uploaded file)."""
+    if not data:
+        return None
+    return _save(data, name)
+
+
 def fetch_favicon(site_url):
     """Best-effort favicon fetch. Returns a relative static path
     (e.g. 'icons/abcd1234.png') on success, or None if nothing could

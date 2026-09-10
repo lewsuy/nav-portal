@@ -88,7 +88,61 @@
   var linkNameInput = document.getElementById("linkNameInput");
   var linkUrlInput = document.getElementById("linkUrlInput");
   var linkSaveBtn = document.getElementById("linkSaveBtn");
+  var linkIconUrlInput = document.getElementById("linkIconUrlInput");
+  var linkIconFileInput = document.getElementById("linkIconFileInput");
+  var linkIconPreview = document.getElementById("linkIconPreview");
+  var linkIconPlaceholder = document.getElementById("linkIconPlaceholder");
   var editingLinkId = null;
+
+  function resetIconPicker(previewSrc) {
+    linkIconUrlInput.value = "";
+    linkIconFileInput.value = "";
+    if (previewSrc) {
+      linkIconPreview.src = previewSrc;
+      linkIconPreview.hidden = false;
+      linkIconPlaceholder.hidden = true;
+    } else {
+      linkIconPreview.hidden = true;
+      linkIconPlaceholder.hidden = false;
+    }
+  }
+
+  function showIconPreview(src) {
+    if (src) {
+      linkIconPreview.src = src;
+      linkIconPreview.hidden = false;
+      linkIconPlaceholder.hidden = true;
+    } else {
+      linkIconPreview.hidden = true;
+      linkIconPlaceholder.hidden = false;
+    }
+  }
+
+  linkIconUrlInput.addEventListener("input", function () {
+    var v = linkIconUrlInput.value.trim();
+    showIconPreview(v || null);
+  });
+
+  linkIconFileInput.addEventListener("change", function () {
+    var f = linkIconFileInput.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () { showIconPreview(reader.result); };
+    reader.readAsDataURL(f);
+  });
+
+  function saveLinkRequest(method, url, payload, hasFile) {
+    if (!hasFile) return api(url, method, payload);
+    var fd = new FormData();
+    Object.keys(payload).forEach(function (k) {
+      if (payload[k] !== undefined && payload[k] !== null) fd.append(k, payload[k]);
+    });
+    fd.append("icon_file", linkIconFileInput.files[0]);
+    return fetch(url, { method: method, body: fd }).then(function (r) {
+      if (!r.ok) return r.json().then(function (e) { throw new Error(e.error || "请求失败"); });
+      return r.json();
+    });
+  }
 
   document.querySelectorAll(".add-link-btn").forEach(function (btn) {
     btn.addEventListener("click", function () {
@@ -97,6 +151,7 @@
       linkModalTitle.textContent = "新建网址";
       linkNameInput.value = "";
       linkUrlInput.value = "";
+      resetIconPicker(null);
       linkCategorySelect.value = catEl.dataset.id;
       openModal(linkModal);
       linkNameInput.focus();
@@ -111,6 +166,8 @@
       linkModalTitle.textContent = "编辑网址";
       linkNameInput.value = itemEl.querySelector(".link-name").textContent;
       linkUrlInput.value = itemEl.querySelector(".link-url").textContent;
+      var curImg = itemEl.querySelector(".link-icon-img, img");
+      resetIconPicker(curImg ? curImg.getAttribute("src") : null);
       linkCategorySelect.value = catEl.dataset.id;
       openModal(linkModal);
       linkNameInput.focus();
@@ -120,15 +177,21 @@
   linkSaveBtn.addEventListener("click", function () {
     var name = linkNameInput.value.trim();
     var url = linkUrlInput.value.trim();
+    var iconUrl = linkIconUrlInput.value.trim();
     var categoryId = linkCategorySelect.value;
     if (!name || !url) { toast("名称和网址不能为空"); return; }
+    var hasFile = !!(linkIconFileInput.files && linkIconFileInput.files[0]);
 
     linkSaveBtn.disabled = true;
-    linkSaveBtn.textContent = "保存中…（正在抓取图标）";
+    linkSaveBtn.textContent = hasFile || iconUrl
+      ? "保存中…（正在处理图标）"
+      : "保存中…（正在抓取图标）";
 
     var req = editingLinkId
-      ? api("/admin/api/links/" + editingLinkId, "PUT", { name: name, url: url })
-      : api("/admin/api/links", "POST", { name: name, url: url, category_id: Number(categoryId) });
+      ? saveLinkRequest("PUT", "/admin/api/links/" + editingLinkId,
+          { name: name, url: url, icon_url: iconUrl }, hasFile)
+      : saveLinkRequest("POST", "/admin/api/links",
+          { name: name, url: url, category_id: Number(categoryId), icon_url: iconUrl }, hasFile);
 
     req.then(function () { location.reload(); })
       .catch(function (e) {
