@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import db
-from favicon import fetch_favicon, download_icon, save_icon_bytes
+from favicon import fetch_favicon, download_icon, save_icon_bytes, ICON_DIR
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("NAV_SECRET_KEY") or os.urandom(32)
@@ -213,19 +213,59 @@ def _link_payload():
     return (request.json or {}), None
 
 
-def _resolve_icon(icon_file, icon_url, url):
-    """手动图标优先：上传文件 > 图标地址 > 自动抓取。失败返回 (icon, error)。"""
+def _truthy(v):
+    return str(v or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def _existing_icon_path(path):
+    """校验 icons/ 下的相对路径确实存在，防止路径穿越；合法返回规范化路径。"""
+    if not path:
+        return None
+    safe = os.path.normpath(path.strip()).replace("\\", "/")
+    if not safe.startswith("icons/") or ".." in safe.split("/"):
+        return None
+    if os.path.isfile(os.path.join(ICON_DIR, safe[len("icons/"):])):
+        return safe
+    return None
+
+
+def _resolve_icon(icon_file, icon_url, url, icon_path=None, icon_remove=False):
+    """图标优先级：上传文件 > 已上传路径 > 图标地址 > 删除 > 自动抓取。失败返回 (icon, error)。"""
     if icon_file and icon_file.filename:
         icon = save_icon_bytes(icon_file.read(), icon_file.filename)
         if not icon:
             return None, "图标文件保存失败"
         return icon, None
+    if icon_path:
+        existing = _existing_icon_path(icon_path)
+        if not existing:
+            return None, "图标路径不存在"
+        return existing, None
     if icon_url:
+        if icon_url.strip().startswith("icons/"):
+            existing = _existing_icon_path(icon_url)
+            if not existing:
+                return None, "图标路径不存在"
+            return existing, None
         icon = download_icon(icon_url)
         if not icon:
             return None, "图标地址下载失败，请确认地址可访问"
         return icon, None
+    if icon_remove:
+        return None, None
     return fetch_favicon(url), None
+
+
+@app.route("/admin/api/upload-icon", methods=["POST"])
+@login_required
+def upload_icon():
+    f = request.files.get("icon_file")
+    if not f or not f.filename:
+        return jsonify({"error": "未选择文件"}), 400
+    icon = save_icon_bytes(f.read(), f.filename)
+    if not icon:
+        return jsonify({"error": "图标文件保存失败"}), 400
+    return jsonify({"icon": icon})
 
 
 @app.route("/admin/api/links", methods=["POST"])
@@ -235,6 +275,7 @@ def create_link():
     name = (fields.get("name") or "").strip()
     url = (fields.get("url") or "").strip()
     icon_url = (fields.get("icon_url") or "").strip()
+    icon_path = (fields.get("icon_path") or "").strip()
     try:
         category_id = int(fields.get("category_id"))
     except (TypeError, ValueError):
@@ -242,7 +283,8 @@ def create_link():
     if not (name and url and category_id):
         return jsonify({"error": "名称、网址、分类不能为空"}), 400
 
-    icon, err = _resolve_icon(icon_file, icon_url, url)
+    icon, err = _resolve_icon(icon_file, icon_url, url, icon_path=icon_path,
+                              icon_remove=_truthy(fields.get("icon_remove")))
     if err:
         return jsonify({"error": err}), 400
 
@@ -268,6 +310,7 @@ def update_link(link_id):
     name = (fields.get("name") or "").strip()
     url = (fields.get("url") or "").strip()
     icon_url = (fields.get("icon_url") or "").strip()
+    icon_path = (fields.get("icon_path") or "").strip()
     if not (name and url):
         return jsonify({"error": "名称、网址不能为空"}), 400
 
@@ -276,8 +319,9 @@ def update_link(link_id):
     if not old:
         conn.close()
         return jsonify({"error": "网址不存在"}), 404
-    if icon_file and icon_file.filename or icon_url:
-        icon, err = _resolve_icon(icon_file, icon_url, url)
+    if icon_file and icon_file.filename or icon_url or icon_path or _truthy(fields.get("icon_remove")):
+        icon, err = _resolve_icon(icon_file, icon_url, url, icon_path=icon_path,
+                                  icon_remove=_truthy(fields.get("icon_remove")))
         if err:
             conn.close()
             return jsonify({"error": err}), 400

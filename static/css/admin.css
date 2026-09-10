@@ -298,6 +298,17 @@
 
 /* ---------- 网址弹窗：手动图标选择（两行布局） ---------- */
 
+#linkModal .modal {
+  width: 600px;
+  height: 450px;
+  overflow-y: auto;
+}
+
+#linkModal .modal h3 { margin-bottom: 12px; }
+
+#linkModal .modal > input,
+#linkModal .modal > select { margin-bottom: 10px; }
+
 .icon-picker {
   display: flex;
   flex-direction: column;
@@ -308,8 +319,52 @@
 .icon-picker-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
+
+.modal label.icon-upload-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  height: 38px;
+  margin-bottom: 0;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: #10b981;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.modal label.icon-upload-btn:hover { background: #0d9f6e; }
+.modal label.icon-upload-btn svg { flex-shrink: 0; }
+.modal label.icon-upload-btn.disabled { opacity: 0.6; pointer-events: none; }
+
+.modal .icon-delete-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: #f43f3f;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.modal .icon-delete-btn:hover { background: #dc2626; }
+.modal .icon-delete-btn.disabled { opacity: 0.45; cursor: default; }
+.modal .icon-delete-btn.disabled:hover { background: #f43f3f; }
 
 .icon-preview {
   width: 40px;
@@ -323,35 +378,9 @@
   box-sizing: border-box;
 }
 
-.icon-preview.icon-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-dim);
-  font-size: 16px;
-}
-
 .icon-preview[hidden] { display: none; }
 
 .icon-url-input {
   width: 100%;
   margin-bottom: 0;
 }
-
-.icon-upload-btn {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 38px;
-  padding: 0 16px;
-  border-radius: 8px;
-  background: #10b981;
-  color: #fff;
-  font-size: 13.5px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.icon-upload-btn:hover { background: #0d9f6e; }

@@ -91,57 +91,95 @@
   var linkIconUrlInput = document.getElementById("linkIconUrlInput");
   var linkIconFileInput = document.getElementById("linkIconFileInput");
   var linkIconPreview = document.getElementById("linkIconPreview");
-  var linkIconPlaceholder = document.getElementById("linkIconPlaceholder");
+  var linkIconDeleteBtn = document.getElementById("linkIconDeleteBtn");
+  var linkIconUploadText = document.getElementById("linkIconUploadText");
   var editingLinkId = null;
+  var uploadedIconPath = null;   // 选择文件后立即上传得到的路径
+  var iconRemove = false;        // 点击「删除图标」后置位
+  var initialIconValue = "";     // 打开弹窗时图标链接输入框的初始值
 
-  function resetIconPicker(previewSrc) {
-    linkIconUrlInput.value = "";
+  function refreshDeleteBtn() {
+    var hasIcon = linkIconPreview.hidden === false || uploadedIconPath || iconRemove;
+    linkIconDeleteBtn.classList.toggle("disabled", !hasIcon);
+  }
+
+  function resetIconPicker(previewSrc, pathValue) {
     linkIconFileInput.value = "";
-    if (previewSrc) {
-      linkIconPreview.src = previewSrc;
-      linkIconPreview.hidden = false;
-      linkIconPlaceholder.hidden = true;
-    } else {
-      linkIconPreview.hidden = true;
-      linkIconPlaceholder.hidden = false;
-    }
+    uploadedIconPath = null;
+    iconRemove = false;
+    initialIconValue = pathValue || "";
+    linkIconUrlInput.value = initialIconValue;
+    showIconPreview(previewSrc || null);
   }
 
   function showIconPreview(src) {
     if (src) {
       linkIconPreview.src = src;
       linkIconPreview.hidden = false;
-      linkIconPlaceholder.hidden = true;
     } else {
       linkIconPreview.hidden = true;
-      linkIconPlaceholder.hidden = false;
     }
+    refreshDeleteBtn();
   }
 
   linkIconUrlInput.addEventListener("input", function () {
     var v = linkIconUrlInput.value.trim();
+    if (v !== uploadedIconPath) uploadedIconPath = null; // 手动改写则丢弃已上传结果
+    if (v) iconRemove = false;                            // 填了新链接视为替换而非删除
     showIconPreview(v || null);
   });
 
+  // 选择文件后立即上传，成功后回填路径并预览
   linkIconFileInput.addEventListener("change", function () {
     var f = linkIconFileInput.files[0];
     if (!f) return;
-    var reader = new FileReader();
-    reader.onload = function () { showIconPreview(reader.result); };
-    reader.readAsDataURL(f);
+    linkIconUploadText.textContent = "上传中…";
+    linkIconFileInput.disabled = true;
+    var fd = new FormData();
+    fd.append("icon_file", f);
+    fetch("/admin/api/upload-icon", { method: "POST", body: fd })
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (e) { throw new Error(e.error || "上传失败"); });
+        return r.json();
+      })
+      .then(function (data) {
+        uploadedIconPath = data.icon;
+        iconRemove = false;
+        initialIconValue = data.icon;
+        linkIconUrlInput.value = data.icon;
+        showIconPreview("/static/" + data.icon);
+      })
+      .catch(function (e) { toast(e.message); })
+      .finally(function () {
+        linkIconUploadText.textContent = "上传图标";
+        linkIconFileInput.disabled = false;
+        linkIconFileInput.value = "";
+      });
   });
 
-  function saveLinkRequest(method, url, payload, hasFile) {
-    if (!hasFile) return api(url, method, payload);
-    var fd = new FormData();
-    Object.keys(payload).forEach(function (k) {
-      if (payload[k] !== undefined && payload[k] !== null) fd.append(k, payload[k]);
-    });
-    fd.append("icon_file", linkIconFileInput.files[0]);
-    return fetch(url, { method: method, body: fd }).then(function (r) {
-      if (!r.ok) return r.json().then(function (e) { throw new Error(e.error || "请求失败"); });
-      return r.json();
-    });
+  linkIconDeleteBtn.addEventListener("click", function () {
+    if (linkIconDeleteBtn.classList.contains("disabled")) return;
+    iconRemove = true;
+    uploadedIconPath = null;
+    initialIconValue = "";
+    linkIconUrlInput.value = "";
+    linkIconFileInput.value = "";
+    showIconPreview(null);
+  });
+
+  function buildIconFields(payload) {
+    var v = linkIconUrlInput.value.trim();
+    if (uploadedIconPath) {
+      payload.icon_path = uploadedIconPath;
+    } else if (/^https?:\/\//i.test(v)) {
+      payload.icon_url = v;
+    } else if (v && v !== initialIconValue && v.indexOf("icons/") === 0) {
+      payload.icon_url = v; // 直接填了已存在的图标路径
+    }
+    if (iconRemove && !payload.icon_path && !payload.icon_url) {
+      payload.icon_remove = "1";
+    }
+    return payload;
   }
 
   document.querySelectorAll(".add-link-btn").forEach(function (btn) {
@@ -151,7 +189,7 @@
       linkModalTitle.textContent = "新建网址";
       linkNameInput.value = "";
       linkUrlInput.value = "";
-      resetIconPicker(null);
+      resetIconPicker(null, "");
       linkCategorySelect.value = catEl.dataset.id;
       openModal(linkModal);
       linkNameInput.focus();
@@ -166,8 +204,12 @@
       linkModalTitle.textContent = "编辑网址";
       linkNameInput.value = itemEl.querySelector(".link-name").textContent;
       linkUrlInput.value = itemEl.querySelector(".link-url").textContent;
-      var curImg = itemEl.querySelector(".link-icon-img, img");
-      resetIconPicker(curImg ? curImg.getAttribute("src") : null);
+      var curImg = itemEl.querySelector("img");
+      var curPath = "";
+      if (curImg) {
+        curPath = (curImg.getAttribute("src") || "").replace(/^.*\/static\//, "");
+      }
+      resetIconPicker(curImg ? curImg.getAttribute("src") : null, curPath);
       linkCategorySelect.value = catEl.dataset.id;
       openModal(linkModal);
       linkNameInput.focus();
@@ -177,21 +219,24 @@
   linkSaveBtn.addEventListener("click", function () {
     var name = linkNameInput.value.trim();
     var url = linkUrlInput.value.trim();
-    var iconUrl = linkIconUrlInput.value.trim();
     var categoryId = linkCategorySelect.value;
     if (!name || !url) { toast("名称和网址不能为空"); return; }
-    var hasFile = !!(linkIconFileInput.files && linkIconFileInput.files[0]);
+
+    var payload = editingLinkId
+      ? { name: name, url: url }
+      : { name: name, url: url, category_id: Number(categoryId) };
+    buildIconFields(payload);
 
     linkSaveBtn.disabled = true;
-    linkSaveBtn.textContent = hasFile || iconUrl
+    linkSaveBtn.textContent = payload.icon_path || payload.icon_url
       ? "保存中…（正在处理图标）"
-      : "保存中…（正在抓取图标）";
+      : payload.icon_remove
+        ? "保存中…（正在删除图标）"
+        : "保存中…（正在抓取图标）";
 
     var req = editingLinkId
-      ? saveLinkRequest("PUT", "/admin/api/links/" + editingLinkId,
-          { name: name, url: url, icon_url: iconUrl }, hasFile)
-      : saveLinkRequest("POST", "/admin/api/links",
-          { name: name, url: url, category_id: Number(categoryId), icon_url: iconUrl }, hasFile);
+      ? api("/admin/api/links/" + editingLinkId, "PUT", payload)
+      : api("/admin/api/links", "POST", payload);
 
     req.then(function () { location.reload(); })
       .catch(function (e) {
