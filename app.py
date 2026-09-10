@@ -92,17 +92,25 @@ def admin_logout():
 @app.route("/admin/change-password", methods=["POST"])
 @login_required
 def admin_change_password():
+    old_password = request.form.get("old_password", "")
     new_password = request.form.get("new_password", "")
+    confirm_password = request.form.get("confirm_password", "")
     if len(new_password) < 6:
         return redirect(url_for("admin_dashboard", pwd_error="密码至少6位"))
+    if new_password != confirm_password:
+        return redirect(url_for("admin_dashboard", pwd_error="两次输入的新密码不一致"))
     conn = db.get_db()
+    row = conn.execute("SELECT * FROM admin WHERE id = 1").fetchone()
+    if not row or not check_password_hash(row["password_hash"], old_password):
+        conn.close()
+        return redirect(url_for("admin_dashboard", pwd_error="旧密码错误"))
     conn.execute(
         "UPDATE admin SET password_hash = ? WHERE id = 1",
         (generate_password_hash(new_password),),
     )
     conn.commit()
     conn.close()
-    return redirect(url_for("admin_dashboard"))
+    return redirect(url_for("admin_dashboard", pwd_ok="密码修改成功"))
 
 
 # ---------- 后台面板 ----------

@@ -153,9 +153,13 @@
 <div class="overlay" id="pwdModal">
   <div class="modal">
     <h3>修改密码</h3>
-    <form method="post" action="/admin/change-password">
+    <form method="post" action="/admin/change-password" onsubmit="return validatePwdForm(this);">
+      <label>旧密码</label>
+      <input type="password" name="old_password" required>
       <label>新密码（至少6位）</label>
-      <input type="password" name="new_password" required minlength="6">
+      <input type="password" name="new_password" id="newPasswordInput" required minlength="6">
+      <label>确认新密码</label>
+      <input type="password" name="confirm_password" id="confirmPasswordInput" required>
       <div class="modal-actions">
         <button type="button" class="btn-secondary" data-close>取消</button>
         <button type="submit" class="btn-primary">保存</button>
@@ -166,7 +170,34 @@
 
 <div class="toast" id="toast"></div>
 
+<script>
+  // 密码修改结果提示（通过 URL 参数带回）
+  (function () {
+    var toastEl = document.getElementById("toast");
+    var err = "{{ request.args.get('pwd_error', '') }}";
+    var ok = "{{ request.args.get('pwd_ok', '') }}";
+    var msg = err || ok;
+    if (msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      setTimeout(function () { toastEl.classList.remove("show"); }, 2500);
+      if (window.history.replaceState) {
+        window.history.replaceState(null, "", location.pathname);
+      }
+    }
+  })();
+</script>
+
 <script src="/static/js/theme.js"></script>
 <script src="/static/js/admin.js"></script>
+<script>
+function validatePwdForm(form) {
+  var pwd = form.new_password.value;
+  var confirmPwd = form.confirm_password.value;
+  if (pwd.length < 6) { alert("新密码至少6位"); return false; }
+  if (pwd !== confirmPwd) { alert("两次输入的新密码不一致"); return false; }
+  return true;
+}
+</script>
 </body>
 </html>
