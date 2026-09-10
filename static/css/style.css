@@ -281,8 +281,7 @@ a { color: inherit; text-decoration: none; }
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .theme-trigger:hover { border-color: var(--accent-dim); box-shadow: var(--shadow-md); }
-.theme-dropdown:hover .theme-trigger,
-.theme-trigger[aria-expanded="true"] {
+.theme-dropdown.menu-visible .theme-trigger {
   border-color: var(--accent-dim);
   box-shadow: var(--shadow-md);
 }
@@ -304,8 +303,17 @@ a { color: inherit; text-decoration: none; }
   gap: 2px;
   z-index: 71;
 }
-.theme-dropdown:hover .theme-menu,
-.theme-menu.open { display: flex; }
+.theme-dropdown.menu-visible .theme-menu { display: flex; }
+
+/* 菜单与 trigger 之间的悬停缓冲带，避免鼠标下移时误触消失 */
+.theme-menu::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+}
 
 .theme-menu-item {
   display: flex;
