@@ -184,7 +184,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 .cat-section h2 {
-  font-size: 16.5px;
+  font-size: 18px;
+  line-height: 30px;
   font-weight: 700;
   color: var(--text);
   margin: 0 0 14px;
