@@ -296,18 +296,24 @@
 
 .success-close:hover { background: var(--card-strong); color: var(--text); }
 
-/* ---------- 网址弹窗：手动图标选择 ---------- */
+/* ---------- 网址弹窗：手动图标选择（两行布局） ---------- */
 
 .icon-picker {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
   margin-bottom: 16px;
 }
 
+.icon-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .icon-preview {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   border: 1px solid var(--border);
   object-fit: contain;
@@ -325,8 +331,10 @@
   font-size: 16px;
 }
 
-.icon-picker input[type="text"] {
-  flex: 1;
+.icon-preview[hidden] { display: none; }
+
+.icon-url-input {
+  width: 100%;
   margin-bottom: 0;
 }
 
@@ -334,18 +342,16 @@
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
   height: 38px;
-  padding: 0 14px;
+  padding: 0 16px;
   border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--card-strong);
-  color: var(--text);
-  font-size: 13px;
+  background: #10b981;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 500;
   cursor: pointer;
   transition: background 0.15s;
 }
 
-.icon-upload-btn:hover { background: var(--border); }
-
-.icon-preview[hidden] { display: none; }
+.icon-upload-btn:hover { background: #0d9f6e; }

@@ -144,12 +144,16 @@
     <input type="text" id="linkUrlInput" placeholder="例如：https://example.com">
     <label>图标（选填，抓取失败时可手动指定）</label>
     <div class="icon-picker">
-      <img id="linkIconPreview" class="icon-preview" src="" alt="" hidden>
-      <div id="linkIconPlaceholder" class="icon-preview icon-placeholder">?</div>
-      <input type="text" id="linkIconUrlInput" placeholder="粘贴图标图片地址（http 开头）">
-      <label class="icon-upload-btn">上传
-        <input type="file" id="linkIconFileInput" accept="image/*" hidden>
-      </label>
+      <div class="icon-picker-row">
+        <img id="linkIconPreview" class="icon-preview" src="" alt="" hidden>
+        <div id="linkIconPlaceholder" class="icon-preview icon-placeholder">?</div>
+        <label class="icon-upload-btn">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5a4.5 4.5 0 1 1 .9-8.9A6 6 0 0 1 17 5.5l-.5.02A4.5 4.5 0 0 1 19.5 12.4"/><path d="M12 12v9"/><path d="m8 16 4-4 4 4"/></svg>
+          上传图标
+          <input type="file" id="linkIconFileInput" accept="image/*" hidden>
+        </label>
+      </div>
+      <input type="text" id="linkIconUrlInput" class="icon-url-input" placeholder="图标链接：请输入图标链接，如果没有，请留空">
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" data-close>取消</button>
