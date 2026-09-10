@@ -1,6 +1,6 @@
 (function () {
   var STORAGE_KEY = "nav-theme"; // 'light' | 'dark' | 'system'
-  var HIDE_DELAY = 1000; // 鼠标离开后菜单延迟消失（毫秒）
+  var HIDE_DELAY = 500; // 鼠标离开后菜单延迟消失（毫秒）
 
   // Tabler 风格 SVG 图标（与模板中一致）
   var ICONS = {

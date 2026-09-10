@@ -262,7 +262,7 @@ a { color: inherit; text-decoration: none; }
   text-decoration: none;
 }
 
-.topbar-icon-btn:hover { background: var(--card-hover); color: var(--text); }
+.topbar-icon-btn:hover { background: var(--card-strong); color: var(--text); }
 
 /* ---------- 主题切换（单按钮 + 悬停下拉菜单） ---------- */
 
