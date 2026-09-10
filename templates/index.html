@@ -12,11 +12,6 @@
 {% include "_topbar.html" %}
 
 <main class="content content-standalone">
-  <div class="hero">
-    <h1 class="page-title">内部导航</h1>
-    <p class="page-subtitle">快速访问常用系统与平台</p>
-  </div>
-
   {% for g in groups %}
   <section class="cat-section" id="cat-{{ g.category.id }}">
     <h2>{{ g.category.name }}</h2>

@@ -1,11 +1,19 @@
 <header class="topbar">
-  {% include "_theme_switcher.html" %}
-  {% if show_admin_link %}
-  <a href="/admin" class="topbar-icon-btn" title="管理后台" aria-label="管理后台">
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-      <circle cx="12" cy="7" r="4"></circle>
+  <a href="/" class="topbar-brand">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 19l9-16 9 16z" fill="var(--accent)" stroke="none" opacity="0.9"></path>
     </svg>
+    <span>内部网址导航</span>
   </a>
-  {% endif %}
+  <div class="topbar-actions">
+    {% include "_theme_switcher.html" %}
+    {% if show_admin_link %}
+    <a href="/admin" class="topbar-icon-btn" title="管理后台" aria-label="管理后台">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    </a>
+    {% endif %}
+  </div>
 </header>
