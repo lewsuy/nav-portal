@@ -92,25 +92,45 @@ def admin_logout():
 @app.route("/admin/change-password", methods=["POST"])
 @login_required
 def admin_change_password():
-    old_password = request.form.get("old_password", "")
-    new_password = request.form.get("new_password", "")
-    confirm_password = request.form.get("confirm_password", "")
+    # 支持 AJAX(JSON) 与表单两种提交方式
+    if request.is_json:
+        data = request.json or {}
+        old_password = data.get("old_password", "")
+        new_password = data.get("new_password", "")
+        confirm_password = data.get("confirm_password", "")
+
+        def fail(msg):
+            return jsonify({"error": msg}), 400
+
+        success_redirect = None
+    else:
+        data = request.form
+        old_password = data.get("old_password", "")
+        new_password = data.get("new_password", "")
+        confirm_password = data.get("confirm_password", "")
+
+        def fail(msg):
+            return redirect(url_for("admin_dashboard", pwd_error=msg))
+
+        success_redirect = redirect(url_for("admin_dashboard", pwd_ok="密码修改成功"))
+
     if len(new_password) < 6:
-        return redirect(url_for("admin_dashboard", pwd_error="密码至少6位"))
+        return fail("密码至少6位")
     if new_password != confirm_password:
-        return redirect(url_for("admin_dashboard", pwd_error="两次输入的新密码不一致"))
+        return fail("两次输入不一致")
+
     conn = db.get_db()
     row = conn.execute("SELECT * FROM admin WHERE id = 1").fetchone()
     if not row or not check_password_hash(row["password_hash"], old_password):
         conn.close()
-        return redirect(url_for("admin_dashboard", pwd_error="旧密码错误"))
+        return fail("旧密码错误")
     conn.execute(
         "UPDATE admin SET password_hash = ? WHERE id = 1",
         (generate_password_hash(new_password),),
     )
     conn.commit()
     conn.close()
-    return redirect(url_for("admin_dashboard", pwd_ok="密码修改成功"))
+    return success_redirect or jsonify({"ok": True})
 
 
 # ---------- 后台面板 ----------

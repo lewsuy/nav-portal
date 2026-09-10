@@ -151,9 +151,72 @@
 
   // ---------- 修改密码弹窗 ----------
 
+  var pwdModal = document.getElementById("pwdModal");
+  var pwdForm = document.getElementById("pwdForm");
+  var oldPasswordInput = document.getElementById("oldPasswordInput");
+  var newPasswordInput = document.getElementById("newPasswordInput");
+  var confirmPasswordInput = document.getElementById("confirmPasswordInput");
+  var pwdSubmitBtn = document.getElementById("pwdSubmitBtn");
+
+  function setPwdError(id, msg) {
+    document.getElementById(id).textContent = msg || "";
+  }
+
+  function clearPwdErrors() {
+    ["oldPwdError", "newPwdError", "confirmPwdError"].forEach(function (id) {
+      setPwdError(id, "");
+    });
+  }
+
   document.getElementById("changePwdBtn").addEventListener("click", function (e) {
     e.preventDefault();
-    openModal(document.getElementById("pwdModal"));
+    clearPwdErrors();
+    pwdForm.reset();
+    openModal(pwdModal);
+    oldPasswordInput.focus();
+  });
+
+  pwdForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    clearPwdErrors();
+
+    var oldPwd = oldPasswordInput.value;
+    var newPwd = newPasswordInput.value;
+    var confirmPwd = confirmPasswordInput.value;
+
+    var hasError = false;
+    if (!oldPwd) { setPwdError("oldPwdError", "请输入原密码"); hasError = true; }
+    if (newPwd.length < 6) { setPwdError("newPwdError", "至少6位"); hasError = true; }
+    if (newPwd && confirmPwd && newPwd !== confirmPwd) {
+      setPwdError("confirmPwdError", "两次输入不一致");
+      hasError = true;
+    }
+    if (hasError) return;
+
+    pwdSubmitBtn.disabled = true;
+    pwdSubmitBtn.textContent = "提交中…";
+
+    api("/admin/change-password", "POST", {
+      old_password: oldPwd,
+      new_password: newPwd,
+      confirm_password: confirmPwd,
+    })
+      .then(function () {
+        closeModal(pwdModal);
+        toast("密码修改成功");
+      })
+      .catch(function (err) {
+        var msg = err.message || "修改失败";
+        if (msg.indexOf("原密码") !== -1 || msg.indexOf("旧密码") !== -1) {
+          setPwdError("oldPwdError", msg);
+        } else {
+          setPwdError("newPwdError", msg);
+        }
+      })
+      .then(function () {
+        pwdSubmitBtn.disabled = false;
+        pwdSubmitBtn.textContent = "提交";
+      });
   });
 
   // ---------- 拖拽排序 ----------

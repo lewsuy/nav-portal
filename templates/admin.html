@@ -153,16 +153,25 @@
 <div class="overlay" id="pwdModal">
   <div class="modal">
     <h3>修改密码</h3>
-    <form method="post" action="/admin/change-password" onsubmit="return validatePwdForm(this);">
-      <label>旧密码</label>
-      <input type="password" name="old_password" required>
+    <form id="pwdForm" novalidate>
+      <label>原密码</label>
+      <div class="pwd-field">
+        <input type="password" id="oldPasswordInput" required>
+        <span class="pwd-error" id="oldPwdError"></span>
+      </div>
       <label>新密码（至少6位）</label>
-      <input type="password" name="new_password" id="newPasswordInput" required minlength="6">
-      <label>确认新密码</label>
-      <input type="password" name="confirm_password" id="confirmPasswordInput" required>
+      <div class="pwd-field">
+        <input type="password" id="newPasswordInput" required minlength="6">
+        <span class="pwd-error" id="newPwdError"></span>
+      </div>
+      <label>确认密码</label>
+      <div class="pwd-field">
+        <input type="password" id="confirmPasswordInput" required>
+        <span class="pwd-error" id="confirmPwdError"></span>
+      </div>
       <div class="modal-actions">
         <button type="button" class="btn-secondary" data-close>取消</button>
-        <button type="submit" class="btn-primary">保存</button>
+        <button type="submit" class="btn-primary" id="pwdSubmitBtn">提交</button>
       </div>
     </form>
   </div>
@@ -190,14 +199,5 @@
 
 <script src="/static/js/theme.js"></script>
 <script src="/static/js/admin.js"></script>
-<script>
-function validatePwdForm(form) {
-  var pwd = form.new_password.value;
-  var confirmPwd = form.confirm_password.value;
-  if (pwd.length < 6) { alert("新密码至少6位"); return false; }
-  if (pwd !== confirmPwd) { alert("两次输入的新密码不一致"); return false; }
-  return true;
-}
-</script>
 </body>
 </html>
