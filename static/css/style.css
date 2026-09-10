@@ -62,44 +62,66 @@ a { color: inherit; text-decoration: none; }
 .layout {
   display: flex;
   min-height: 100vh;
+  align-items: flex-start;
 }
 
 .sidebar {
-  width: 220px;
+  width: 210px;
   flex-shrink: 0;
+  margin: 24px 16px 24px 24px;
+  padding: 20px 16px;
   background: var(--panel);
-  border-right: 1px solid var(--border);
-  padding: 24px 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: 24px;
+  max-height: calc(100vh - 48px);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
 
-.brand {
-  font-size: 17px;
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text);
-  padding: 0 8px 20px;
-  letter-spacing: 0.2px;
+  padding: 0 4px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.sidebar-brand svg { color: var(--accent); flex-shrink: 0; }
+
+.sidebar-section {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--text-dim);
+  padding: 4px 8px 10px;
 }
 
 .cat-nav {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  flex: 1;
 }
 
 .cat-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 9px 10px;
-  border-radius: 8px;
+  border-radius: 10px;
   color: var(--text-dim);
-  font-size: 14px;
+  font-size: 13.5px;
+  text-decoration: none;
   transition: background 0.15s, color 0.15s;
 }
+
+.cat-link svg { opacity: 0.85; }
 
 .cat-link:hover {
   background: var(--card-hover);
@@ -107,14 +129,14 @@ a { color: inherit; text-decoration: none; }
 }
 
 .cat-link.active {
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--card-strong);
+  color: var(--text);
   font-weight: 600;
 }
 
 .content {
   flex: 1;
-  padding: 64px 36px 60px;
+  padding: 24px 36px 60px 8px;
   min-width: 0;
 }
 
@@ -343,16 +365,16 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media (max-width: 720px) {
-  .layout { flex-direction: column; }
+  .layout { flex-direction: column; align-items: stretch; }
   .sidebar {
-    width: 100%;
-    height: auto;
+    width: auto;
+    margin: 16px;
+    max-height: none;
     position: relative;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
+    top: 0;
   }
   .cat-nav { flex-direction: row; flex-wrap: wrap; }
-  .content { padding: 20px 16px 40px; }
+  .content { padding: 8px 16px 40px; }
   .content-standalone { padding: 56px 16px 40px; }
   .hero { padding: 20px 20px; border-radius: 16px; }
 }
