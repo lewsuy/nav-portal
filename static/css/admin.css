@@ -299,6 +299,7 @@
 /* ---------- 网址弹窗：手动图标选择（两行布局） ---------- */
 
 #linkModal .modal {
+  box-sizing: content-box; /* 抵消全局 border-box：让内容区正好 600x450 */
   width: 600px;
   height: 450px;
   overflow-y: auto;
@@ -332,8 +333,8 @@
   margin-bottom: 0;
   padding: 0 16px;
   border-radius: 8px;
-  background: #10b981;
-  color: #fff;
+  background: #f1f2f4;
+  color: var(--text);
   font-size: 13.5px;
   font-weight: 500;
   white-space: nowrap;
@@ -341,8 +342,8 @@
   transition: background 0.15s;
 }
 
-.modal label.icon-upload-btn:hover { background: #0d9f6e; }
-.modal label.icon-upload-btn svg { flex-shrink: 0; }
+.modal label.icon-upload-btn:hover { background: #e4e6ea; }
+.modal label.icon-upload-btn svg { flex-shrink: 0; color: #3b82f6; }
 .modal label.icon-upload-btn.disabled { opacity: 0.6; pointer-events: none; }
 
 .modal .icon-delete-btn {
@@ -353,8 +354,8 @@
   padding: 0 16px;
   border: none;
   border-radius: 8px;
-  background: #f43f3f;
-  color: #fff;
+  background: #f1f2f4;
+  color: var(--text);
   font-size: 13.5px;
   font-weight: 500;
   white-space: nowrap;
@@ -362,7 +363,7 @@
   transition: background 0.15s;
 }
 
-.modal .icon-delete-btn:hover { background: #dc2626; }
+.modal .icon-delete-btn:hover { background: #e4e6ea; }
 .modal .icon-delete-btn.disabled { opacity: 0.45; cursor: default; }
 .modal .icon-delete-btn.disabled:hover { background: #f43f3f; }
 
