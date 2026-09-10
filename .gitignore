@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 static/icons/*
 !static/icons/.gitkeep
+.workbuddy/
