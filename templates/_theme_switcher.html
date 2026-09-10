@@ -1,22 +1,27 @@
-<div class="theme-dropdown">
-  <button type="button" class="theme-trigger" id="themeTrigger" aria-haspopup="true" aria-expanded="false" title="主题">
-    <span class="theme-trigger-icon">☀️</span>
+<div class="theme-switcher" id="themeSwitcher">
+  <button type="button" class="theme-icon-btn" data-theme-option="light" aria-label="Light 主题" title="Light">
+    <svg class="theme-icon-svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+      <path d="M12 3l0 2"></path>
+      <path d="M12 19l0 2"></path>
+      <path d="M3 12l2 0"></path>
+      <path d="M19 12l2 0"></path>
+      <path d="M5.6 5.6l1.4 1.4"></path>
+      <path d="M17 17l1.4 1.4"></path>
+      <path d="M5.6 18.4l1.4 -1.4"></path>
+      <path d="M17 7l1.4 -1.4"></path>
+    </svg>
   </button>
-  <div class="theme-menu" id="themeMenu">
-    <button type="button" class="theme-menu-item" data-theme-option="light">
-      <span class="theme-menu-icon">☀️</span>
-      <span class="theme-menu-label">Light</span>
-      <span class="theme-check">✓</span>
-    </button>
-    <button type="button" class="theme-menu-item" data-theme-option="dark">
-      <span class="theme-menu-icon">🌙</span>
-      <span class="theme-menu-label">Dark</span>
-      <span class="theme-check">✓</span>
-    </button>
-    <button type="button" class="theme-menu-item" data-theme-option="system">
-      <span class="theme-menu-icon">💻</span>
-      <span class="theme-menu-label">System</span>
-      <span class="theme-check">✓</span>
-    </button>
-  </div>
+  <button type="button" class="theme-icon-btn" data-theme-option="dark" aria-label="Dark 主题" title="Dark">
+    <svg class="theme-icon-svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1 -9 -9"></path>
+    </svg>
+  </button>
+  <button type="button" class="theme-icon-btn" data-theme-option="system" aria-label="System 主题" title="System">
+    <svg class="theme-icon-svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="12" rx="1"></rect>
+      <path d="M8 20h8"></path>
+      <path d="M12 16v4"></path>
+    </svg>
+  </button>
 </div>
