@@ -72,11 +72,26 @@
       var trigger = root.querySelector(".theme-trigger");
       var hideTimer = null;
 
+      function adjustPlacement() {
+        var menu = root.querySelector(".theme-menu");
+        if (!menu) return;
+        // 用 trigger 位置估算：trigger 底部距离视口底部 < 菜单估算高度时翻转
+        var rect = trigger.getBoundingClientRect();
+        var spaceBelow = window.innerHeight - rect.bottom;
+        var ESTIMATED_MENU_HEIGHT = 160; // 3 项 + padding，足够覆盖
+        if (spaceBelow < ESTIMATED_MENU_HEIGHT + 12) {
+          menu.classList.add("flip-up");
+        } else {
+          menu.classList.remove("flip-up");
+        }
+      }
+
       function showMenu() {
         if (hideTimer) {
           clearTimeout(hideTimer);
           hideTimer = null;
         }
+        adjustPlacement();
         root.classList.add("menu-visible");
         if (trigger) trigger.setAttribute("aria-expanded", "true");
       }

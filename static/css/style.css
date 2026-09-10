@@ -164,20 +164,28 @@ a { color: inherit; text-decoration: none; }
 
 .sidebar-footer .cat-link-footer { flex: 1; min-width: 0; }
 
-/* 底部主题按钮：菜单向上展开，避免超出视口 */
+/* 主题菜单方向：默认向下；空间不足时 JS 加 .flip-up 改为向上 */
 .sidebar-footer .theme-dropdown { position: static; }
 .sidebar-footer .theme-menu {
+  top: calc(100% + 8px);
+  bottom: auto;
+  right: 0;
+}
+.sidebar-footer .theme-menu.flip-up {
   top: auto;
   bottom: calc(100% + 8px);
-  right: 0;
 }
 .sidebar-footer .theme-menu::before {
   content: "";
   position: absolute;
-  bottom: -10px;
+  top: -10px;
   left: 0;
   right: 0;
   height: 10px;
+}
+.sidebar-footer .theme-menu.flip-up::before {
+  top: auto;
+  bottom: -10px;
 }
 
 .content {
