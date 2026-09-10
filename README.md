@@ -90,12 +90,20 @@ pip install -r requirements.txt
 python app.py     # http://127.0.0.1:80
 ```
 
-数据库路径、密钥均可通过环境变量覆盖：
+数据库路径、密钥、站点名称均可通过环境变量覆盖：
 
 | 环境变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `NAV_DB_PATH` | `数据目录/nav.db` | SQLite 数据库文件路径 |
-| `NAV_SECRET_KEY` | 随机生成 | Flask Session 密钥 |
+| `NAV_DB_PATH` | `<项目>/data/nav.db` | SQLite 数据库文件路径 |
+| `NAV_SECRET_KEY` | 随机生成 | Flask Session 密钥，固定后重启不会掉登录态 |
+| `NAV_SITE_NAME` | `内部网址导航` | 站点名称：浏览器标题与顶部横条文案 |
+| `NAV_PROJECT_URL` | 项目仓库地址 | 后台侧边栏「项目地址」按钮指向的链接 |
+
+部署时也可以直接传入（不传则使用默认值）：
+
+```bash
+sudo NAV_SITE_NAME="运维导航" NAV_PROJECT_URL="https://example.com" bash install.sh
+```
 
 ## 常用命令
 
@@ -147,6 +155,26 @@ conn.commit()
 
 **升级后图标丢失？**
 说明 `install.sh` 里的图标备份恢复逻辑未生效。请确认脚本中包含 `ICON_BACKUP` 相关处理，并保证 `/opt/nav-portal/static/icons` 目录存在。
+
+## 定制
+
+| 想改什么 | 怎么改 |
+| --- | --- |
+| 站点名称 | 环境变量 `NAV_SITE_NAME`，或直接改 `app.py` 里的默认值 |
+| 项目地址按钮 | 环境变量 `NAV_PROJECT_URL` |
+| 监听端口 | `install.sh` 顶部 `PORT` 变量（默认 80） |
+| 每行卡片数量 | `static/css/style.css` 中 `.card` 宽度公式与媒体查询 |
+| 主题色 | `static/css/style.css` 顶部 `:root` 的 CSS 变量 |
+
+## 开源说明
+
+本仓库**只包含程序代码，不包含任何使用者的数据**：
+
+- 导航数据（分类、网址、图标）全部存放在运行时生成的 `data/nav.db` 与 `static/icons/`，两者均已在 `.gitignore` 中排除，不会进入版本库
+- 管理员账号在首次启动时随机生成，代码中没有任何内置账号或密码
+- 代码中不含任何内网地址、域名、密钥；所有可变项都通过环境变量配置
+
+因此克隆本仓库部署得到的是一个**空白系统**：首次安装后只有一个随机密码的 `admin` 账号，分类与网址需要自行在后台添加。
 
 ## License
 

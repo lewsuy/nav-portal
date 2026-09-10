@@ -10,6 +10,15 @@ from favicon import fetch_favicon, download_icon, save_icon_bytes, ICON_DIR
 app = Flask(__name__)
 app.secret_key = os.environ.get("NAV_SECRET_KEY") or os.urandom(32)
 
+# 站点展示名称与项目地址，均可通过环境变量覆盖（部署方自行配置，代码中不写死个人信息）
+SITE_NAME = os.environ.get("NAV_SITE_NAME", "内部网址导航")
+PROJECT_URL = os.environ.get("NAV_PROJECT_URL", "https://github.com/lewsuy/nav-portal")
+
+
+@app.context_processor
+def inject_site_config():
+    return {"site_name": SITE_NAME, "project_url": PROJECT_URL}
+
 AVATAR_COLORS = ["#6366f1", "#0ea5e9", "#8b5cf6", "#f59e0b", "#f472b6", "#10b981"]
 
 

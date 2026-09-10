@@ -86,6 +86,18 @@ if [[ ! -f "$INSTALL_DIR/data/secret_key" ]]; then
 fi
 NAV_SECRET_KEY="$(cat "$INSTALL_DIR/data/secret_key")"
 
+# 可选配置：站点名称与项目地址（不设置则使用程序内置默认值）
+# 用法：sudo NAV_SITE_NAME="运维导航" NAV_PROJECT_URL="https://example.com" bash install.sh
+ENV_EXTRA=""
+if [[ -n "${NAV_SITE_NAME:-}" ]]; then
+  ENV_EXTRA="${ENV_EXTRA}Environment=NAV_SITE_NAME=${NAV_SITE_NAME}
+"
+fi
+if [[ -n "${NAV_PROJECT_URL:-}" ]]; then
+  ENV_EXTRA="${ENV_EXTRA}Environment=NAV_PROJECT_URL=${NAV_PROJECT_URL}
+"
+fi
+
 echo "-- 写入 systemd 服务 --"
 cat > "/etc/systemd/system/${SERVICE_NAME}.service" <<EOF
 [Unit]
@@ -97,7 +109,7 @@ Type=simple
 WorkingDirectory=${INSTALL_DIR}
 Environment=NAV_DB_PATH=${INSTALL_DIR}/data/nav.db
 Environment=NAV_SECRET_KEY=${NAV_SECRET_KEY}
-ExecStart=${INSTALL_DIR}/venv/bin/gunicorn -w 2 -b 0.0.0.0:${PORT} app:app
+${ENV_EXTRA}ExecStart=${INSTALL_DIR}/venv/bin/gunicorn -w 2 -b 0.0.0.0:${PORT} app:app
 Restart=on-failure
 RestartSec=3
 
