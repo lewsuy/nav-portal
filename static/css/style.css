@@ -9,6 +9,7 @@ html[data-theme="light"] {
   --border: #e8eaf1;
   --text: #1e2233;
   --text-dim: #6b7280;
+  --card-strong: #e8eaf1;
   --accent: #6366f1;
   --accent-2: #10b981;
   --accent-dim: #4f46e5;
@@ -31,6 +32,7 @@ html[data-theme="dark"] {
   --border: #2a2f3d;
   --text: #eef0f5;
   --text-dim: #9aa0b1;
+  --card-strong: #2a2f3d;
   --accent: #818cf8;
   --accent-2: #34d399;
   --accent-dim: #6366f1;
@@ -250,16 +252,17 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   border-radius: 10px;
-  background: var(--panel);
+  background: transparent;
   color: var(--text);
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+  box-shadow: none;
+  transition: background 0.15s, color 0.15s;
+  text-decoration: none;
 }
 
-.topbar-icon-btn:hover { border-color: var(--accent-dim); color: var(--accent); box-shadow: var(--shadow-md); }
+.topbar-icon-btn:hover { background: var(--card-hover); color: var(--text); }
 
 /* ---------- 主题切换（单按钮 + 悬停下拉菜单） ---------- */
 
@@ -280,8 +283,8 @@ a { color: inherit; text-decoration: none; }
   padding: 0;
   transition: background 0.15s;
 }
-.theme-trigger:hover { background: var(--card-hover); }
-.theme-dropdown.menu-visible .theme-trigger { background: var(--card-hover); }
+.theme-trigger:hover { background: var(--card-strong); }
+.theme-dropdown.menu-visible .theme-trigger { background: var(--card-strong); }
 
 .theme-trigger-icon { display: inline-flex; }
 
@@ -326,8 +329,8 @@ a { color: inherit; text-decoration: none; }
   cursor: pointer;
   text-align: left;
 }
-.theme-menu-item:hover { background: var(--card-hover); color: var(--text); }
-.theme-menu-item.active { color: var(--text); background: var(--card-hover); }
+.theme-menu-item:hover { background: var(--card-strong); color: var(--text); }
+.theme-menu-item.active { color: var(--text); background: var(--card-strong); }
 
 .theme-menu-icon { display: inline-flex; width: 16px; }
 .theme-menu-label { flex: 1; }
