@@ -18,7 +18,7 @@
     {% if g.links %}
     <div class="grid">
       {% for link in g.links %}
-      <a class="card" href="{{ link.url }}" target="_blank" rel="noopener" title="{{ link.name }}">
+      <a class="card" href="{{ link.url }}" target="_blank" rel="noopener" title="{{ link.url }}">
         {% if link.icon %}
         <img src="/static/{{ link.icon }}" alt="" loading="lazy">
         {% else %}
