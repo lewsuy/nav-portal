@@ -27,11 +27,7 @@
       btn.closest(".overlay").classList.remove("open");
     });
   });
-  document.querySelectorAll(".overlay").forEach(function (ov) {
-    ov.addEventListener("click", function (e) {
-      if (e.target === ov) closeModal(ov);
-    });
-  });
+  // 点击遮罩不关闭弹窗，避免填写内容误丢；仅通过「取消」/「保存」按钮关闭
 
   // ---------- 分类：新建/编辑 ----------
 
