@@ -110,7 +110,8 @@ def admin_change_password():
 @app.route("/admin")
 @login_required
 def admin_dashboard():
-    return render_template("admin.html", groups=get_nav_data())
+    # 后台始终展示全部分类（含私有），否则无法管理私有分类下的网址
+    return render_template("admin.html", groups=get_nav_data(include_private=True))
 
 
 # ---------- 分类 API ----------
