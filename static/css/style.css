@@ -114,10 +114,15 @@ a { color: inherit; text-decoration: none; }
   color: var(--text);
   font-size: 14px;
   text-decoration: none;
+  text-align: center;
   transition: background 0.15s, color 0.15s;
 }
 
-.cat-link svg { opacity: 0.85; }
+/* SVG 是行内元素，浏览器会按字符基线对齐，加 vertical-align 防止图标被文本推得靠右 */
+.cat-link svg { opacity: 0.85; vertical-align: middle; }
+
+/* 保证文字与图标基线对齐，避免图标偏上、文字偏右的视觉偏差 */
+.cat-link span { line-height: 1; }
 
 .cat-link:hover {
   background: var(--card-hover);
