@@ -33,6 +33,7 @@
 
   var categoryModal = document.getElementById("categoryModal");
   var categoryNameInput = document.getElementById("categoryNameInput");
+  var categoryPrivateInput = document.getElementById("categoryPrivateInput");
   var categoryModalTitle = document.getElementById("categoryModalTitle");
   var categorySaveBtn = document.getElementById("categorySaveBtn");
   var editingCategoryId = null;
@@ -41,6 +42,7 @@
     editingCategoryId = null;
     categoryModalTitle.textContent = "新建分类";
     categoryNameInput.value = "";
+    categoryPrivateInput.checked = false;
     openModal(categoryModal);
     categoryNameInput.focus();
   });
@@ -51,6 +53,7 @@
       editingCategoryId = catEl.dataset.id;
       categoryModalTitle.textContent = "编辑分类";
       categoryNameInput.value = catEl.querySelector(".cat-title").textContent;
+      categoryPrivateInput.checked = catEl.dataset.private === "1";
       openModal(categoryModal);
       categoryNameInput.focus();
     });
@@ -59,9 +62,10 @@
   categorySaveBtn.addEventListener("click", function () {
     var name = categoryNameInput.value.trim();
     if (!name) { toast("分类名称不能为空"); return; }
+    var payload = { name: name, is_private: categoryPrivateInput.checked };
     var req = editingCategoryId
-      ? api("/admin/api/categories/" + editingCategoryId, "PUT", { name: name })
-      : api("/admin/api/categories", "POST", { name: name });
+      ? api("/admin/api/categories/" + editingCategoryId, "PUT", payload)
+      : api("/admin/api/categories", "POST", payload);
     req.then(function () { location.reload(); }).catch(function (e) { toast(e.message); });
   });
 

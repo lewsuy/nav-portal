@@ -27,7 +27,8 @@ def init_db():
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            sort_order INTEGER NOT NULL DEFAULT 0
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            is_private INTEGER NOT NULL DEFAULT 0
         );
         CREATE TABLE IF NOT EXISTS links (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -74,6 +75,12 @@ def init_db():
                 "登录后请到后台自行修改密码；此文件之后可以删除。\n"
             )
         os.chmod(secret_path, 0o600)
+
+    # 老库升级：categories 缺 is_private 列时补上（幂等）
+    cols = [r["name"] for r in conn.execute("PRAGMA table_info(categories)").fetchall()]
+    if "is_private" not in cols:
+        conn.execute("ALTER TABLE categories ADD COLUMN is_private INTEGER NOT NULL DEFAULT 0")
+        conn.commit()
 
     conn.close()
     return generated_password

@@ -30,13 +30,15 @@ def login_required(view):
     return wrapped
 
 
-def get_nav_data():
+def get_nav_data(include_private=False):
     conn = db.get_db()
     categories = conn.execute(
         "SELECT * FROM categories ORDER BY sort_order, id"
     ).fetchall()
     result = []
     for cat in categories:
+        if not include_private and cat["is_private"]:
+            continue
         links = conn.execute(
             "SELECT * FROM links WHERE category_id = ? ORDER BY sort_order, id",
             (cat["id"],),
@@ -58,7 +60,9 @@ def get_nav_data():
 
 @app.route("/")
 def index():
-    return render_template("index.html", groups=get_nav_data())
+    # 未登录时过滤私有分类；登录后（session 中）展示全部
+    logged_in = bool(session.get("logged_in"))
+    return render_template("index.html", groups=get_nav_data(include_private=logged_in))
 
 
 # ---------- 后台登录 ----------
@@ -114,28 +118,36 @@ def admin_dashboard():
 @app.route("/admin/api/categories", methods=["POST"])
 @login_required
 def create_category():
-    name = (request.json or {}).get("name", "").strip()
+    data = request.json or {}
+    name = data.get("name", "").strip()
     if not name:
         return jsonify({"error": "分类名称不能为空"}), 400
+    is_private = 1 if data.get("is_private") else 0
     conn = db.get_db()
     max_order = conn.execute("SELECT COALESCE(MAX(sort_order), -1) AS m FROM categories").fetchone()["m"]
     cur = conn.execute(
-        "INSERT INTO categories (name, sort_order) VALUES (?, ?)", (name, max_order + 1)
+        "INSERT INTO categories (name, sort_order, is_private) VALUES (?, ?, ?)",
+        (name, max_order + 1, is_private),
     )
     conn.commit()
     new_id = cur.lastrowid
     conn.close()
-    return jsonify({"id": new_id, "name": name})
+    return jsonify({"id": new_id, "name": name, "is_private": is_private})
 
 
 @app.route("/admin/api/categories/<int:cat_id>", methods=["PUT"])
 @login_required
 def update_category(cat_id):
-    name = (request.json or {}).get("name", "").strip()
+    data = request.json or {}
+    name = data.get("name", "").strip()
     if not name:
         return jsonify({"error": "分类名称不能为空"}), 400
+    is_private = 1 if data.get("is_private") else 0
     conn = db.get_db()
-    conn.execute("UPDATE categories SET name = ? WHERE id = ?", (name, cat_id))
+    conn.execute(
+        "UPDATE categories SET name = ?, is_private = ? WHERE id = ?",
+        (name, is_private, cat_id),
+    )
     conn.commit()
     conn.close()
     return jsonify({"ok": True})

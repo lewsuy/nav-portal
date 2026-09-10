@@ -68,10 +68,11 @@
 
     <div id="categoryList">
       {% for g in groups %}
-      <div class="admin-cat" draggable="true" data-id="{{ g.category.id }}">
+      <div class="admin-cat" draggable="true" data-id="{{ g.category.id }}" data-private="{{ 1 if g.category.is_private else 0 }}">
         <div class="admin-cat-header">
           <span class="drag-handle">⠿</span>
           <span class="cat-title">{{ g.category.name }}</span>
+          {% if g.category.is_private %}<span class="private-badge" title="私有分类：仅登录后展示">私有</span>{% endif %}
           <div class="cat-actions">
             <button class="icon-btn add-link-btn">+ 网址</button>
             <button class="icon-btn edit-cat-btn">编辑</button>
@@ -115,6 +116,11 @@
     <h3 id="categoryModalTitle">新建分类</h3>
     <label>分类名称</label>
     <input type="text" id="categoryNameInput" placeholder="例如：业务系统">
+    <label class="switch-label">
+      <input type="checkbox" id="categoryPrivateInput">
+      <span>是否私有</span>
+      <small>私有分类仅在登录后展示，未登录状态不可见</small>
+    </label>
     <div class="modal-actions">
       <button class="btn-secondary" data-close>取消</button>
       <button class="btn-primary" id="categorySaveBtn">保存</button>
