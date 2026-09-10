@@ -115,13 +115,15 @@ a { color: inherit; text-decoration: none; }
   font-size: 14px;
   text-decoration: none;
   text-align: center;
+  /* 显式重置按钮默认 margin，避免某些浏览器把按钮文字向右挤 2px */
+  margin: 0;
+  /* 把“图标 + 文字”当一个不可拆分块来居中 */
+  box-sizing: border-box;
   transition: background 0.15s, color 0.15s;
 }
 
-/* SVG 是行内元素，浏览器会按字符基线对齐，加 vertical-align 防止图标被文本推得靠右 */
-.cat-link svg { opacity: 0.85; vertical-align: middle; }
-
-/* 保证文字与图标基线对齐，避免图标偏上、文字偏右的视觉偏差 */
+/* SVG 强制与 span 同基线，避免图标比文字高/低造成视觉偏移 */
+.cat-link svg { opacity: 0.85; vertical-align: middle; flex-shrink: 0; }
 .cat-link span { line-height: 1; }
 
 .cat-link:hover {
