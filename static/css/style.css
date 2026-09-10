@@ -86,17 +86,15 @@ a { color: inherit; text-decoration: none; }
 .sidebar-brand {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 10px;
   font-size: 14.5px;
   font-weight: 700;
   color: var(--text);
-  padding: 4px 0 18px;
+  padding: 4px 14px 18px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 18px;
 }
-.sidebar-brand > svg { color: var(--accent); flex: 0 0 auto; align-self: center; }
-.sidebar-brand > span { line-height: 1; flex: 0 0 auto; }
+.sidebar-brand svg { color: var(--accent); flex-shrink: 0; }
 
 .cat-nav {
   display: flex;
@@ -108,24 +106,16 @@ a { color: inherit; text-decoration: none; }
 .cat-link {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 12px;
   padding: 12px 14px;
   border-radius: 12px;
   color: var(--text);
   font-size: 14px;
   text-decoration: none;
-  text-align: center;
-  /* 显式重置按钮默认 margin，避免某些浏览器把按钮文字向右挤 2px */
-  margin: 0;
-  /* 把"图标 + 文字"当一个不可拆分块来居中 */
-  box-sizing: border-box;
   transition: background 0.15s, color 0.15s;
 }
 
-/* 关键：SVG/span 都是 flex item，自身垂直居中、不被行内基线影响；flex:0 0 auto 防止被压缩 */
-.cat-link > svg { opacity: 0.85; flex: 0 0 auto; align-self: center; }
-.cat-link > span { line-height: 1; flex: 0 0 auto; }
+.cat-link svg { opacity: 0.85; }
 
 .cat-link:hover {
   background: var(--card-hover);
@@ -157,7 +147,7 @@ a { color: inherit; text-decoration: none; }
   position: relative; /* 主题菜单 absolute 定位的参照 */
 }
 
-.sidebar-footer .cat-link-footer { flex: 1; min-width: 0; justify-content: flex-start; }
+.sidebar-footer .cat-link-footer { flex: 1; min-width: 0; }
 
 /* 侧边栏底部主题菜单：固定向上展开（footer 始终贴近卡片底部） */
 .sidebar-footer .theme-dropdown { position: static; }
