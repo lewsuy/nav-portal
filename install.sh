@@ -3,7 +3,7 @@ set -euo pipefail
 
 INSTALL_DIR="/opt/nav-portal"
 SERVICE_NAME="nav-portal"
-PORT=9000
+PORT=80
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "== 内部导航系统 安装脚本 =="
