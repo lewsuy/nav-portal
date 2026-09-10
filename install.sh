@@ -42,10 +42,14 @@ mkdir -p "$INSTALL_DIR"
 rsync -a --delete \
   --exclude 'data' \
   --exclude 'venv' \
+  --exclude 'static/icons' \
   "$SCRIPT_DIR"/ "$INSTALL_DIR"/ 2>/dev/null || {
     # 没有 rsync 时的兜底方案
-    find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 ! -name data ! -name venv -exec rm -rf {} +
+    find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 ! -name data ! -name venv ! -path "$INSTALL_DIR/static/icons" -exec rm -rf {} + 2>/dev/null
+    mkdir -p "$INSTALL_DIR/static/icons"
     cp -r "$SCRIPT_DIR"/. "$INSTALL_DIR"/
+    # 兜底分支下重新放回 .gitkeep（被 rm 清掉了）
+    : > "$INSTALL_DIR/static/icons/.gitkeep"
   }
 
 mkdir -p "$INSTALL_DIR/data"
