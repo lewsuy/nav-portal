@@ -253,7 +253,13 @@
 
 /* ---------- 修改密码：框内右对齐错误提示 ---------- */
 
-.pwd-field { position: relative; }
+.pwd-field {
+  position: relative;
+  /* 把原 input 的 margin-bottom 转移到外层，保证提示文字相对输入框（而非含间距的容器）居中 */
+  margin-bottom: 14px;
+}
+
+.pwd-field input { margin-bottom: 0 !important; }
 
 .pwd-field .pwd-error {
   position: absolute;
@@ -268,3 +274,24 @@
   pointer-events: none;
   white-space: nowrap;
 }
+
+/* ---------- 修改密码成功对话框：右上角 X ---------- */
+
+.success-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.success-close:hover { background: var(--card-strong); color: var(--text); }

@@ -176,6 +176,17 @@
     oldPasswordInput.focus();
   });
 
+  // 修改密码成功对话框：X 手动关闭 / 2 秒自动关闭
+  var pwdSuccessModal = document.getElementById("pwdSuccessModal");
+  var pwdSuccessTimer = null;
+
+  function closePwdSuccess() {
+    if (pwdSuccessTimer) { clearTimeout(pwdSuccessTimer); pwdSuccessTimer = null; }
+    closeModal(pwdSuccessModal);
+  }
+
+  document.getElementById("pwdSuccessClose").addEventListener("click", closePwdSuccess);
+
   pwdForm.addEventListener("submit", function (e) {
     e.preventDefault();
     clearPwdErrors();
@@ -203,7 +214,9 @@
     })
       .then(function () {
         closeModal(pwdModal);
-        toast("密码修改成功");
+        pwdForm.reset();
+        openModal(pwdSuccessModal);
+        pwdSuccessTimer = setTimeout(closePwdSuccess, 2000);
       })
       .catch(function (err) {
         var msg = err.message || "修改失败";
