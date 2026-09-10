@@ -38,21 +38,36 @@ systemctl stop "$SERVICE_NAME" 2>/dev/null || true
 
 echo "-- 部署程序文件到 $INSTALL_DIR --"
 mkdir -p "$INSTALL_DIR"
+
+# 图标缓存（static/icons）和 data 一样属于"运行时数据"，同步时必须保留。
+# 先备份到临时目录，同步完成后再恢复，避免被 --delete / rm -rf 清掉。
+ICON_BACKUP=""
+if [[ -d "$INSTALL_DIR/static/icons" ]]; then
+  ICON_BACKUP="$(mktemp -d)"
+  cp -a "$INSTALL_DIR/static/icons/." "$ICON_BACKUP/" 2>/dev/null || true
+fi
+
 # 保留 data 目录（数据库 + 已抓取的图标缓存），只替换程序代码
 rsync -a --delete \
   --exclude 'data' \
   --exclude 'venv' \
   --exclude 'static/icons' \
   "$SCRIPT_DIR"/ "$INSTALL_DIR"/ 2>/dev/null || {
-    # 没有 rsync 时的兜底方案
-    find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 ! -name data ! -name venv ! -path "$INSTALL_DIR/static/icons" -exec rm -rf {} + 2>/dev/null
-    mkdir -p "$INSTALL_DIR/static/icons"
+    # 没有 rsync 时的兜底方案：只清理顶层条目，跳过 data / venv
+    find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 \
+      ! -name data ! -name venv -exec rm -rf {} + 2>/dev/null || true
     cp -r "$SCRIPT_DIR"/. "$INSTALL_DIR"/
-    # 兜底分支下重新放回 .gitkeep（被 rm 清掉了）
-    : > "$INSTALL_DIR/static/icons/.gitkeep"
   }
 
-mkdir -p "$INSTALL_DIR/data"
+mkdir -p "$INSTALL_DIR/data" "$INSTALL_DIR/static/icons"
+
+# 恢复图标缓存
+if [[ -n "$ICON_BACKUP" ]]; then
+  cp -a "$ICON_BACKUP/." "$INSTALL_DIR/static/icons/" 2>/dev/null || true
+  rm -rf "$ICON_BACKUP"
+fi
+# 保证 .gitkeep 存在（static/icons 被清空时占位）
+: > "$INSTALL_DIR/static/icons/.gitkeep"
 
 echo "-- 创建 Python 虚拟环境并安装依赖 --"
 if [[ ! -d "$INSTALL_DIR/venv" ]]; then
