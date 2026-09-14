@@ -31,7 +31,7 @@
       dropdown.addEventListener("mouseleave", scheduleHide);
 
       // 「管理后台」菜单项：当前页跳转（<a> 无 target，天然同页）
-      var menuLink = dropdown.querySelector(".theme-menu-item[href]");
+      var menuLink = dropdown.querySelector(".admin-menu-item[href]");
       if (menuLink) {
         menuLink.addEventListener("click", function () {
           if (hideTimer) clearTimeout(hideTimer);
