@@ -112,6 +112,9 @@ def admin_login():
 @app.route("/admin/logout")
 def admin_logout():
     session.clear()
+    # 前台下拉 AJAX 退出：返回 JSON，由前端刷新页面隐藏私有分类
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return jsonify({"ok": True})
     return redirect(url_for("admin_login"))
 
 

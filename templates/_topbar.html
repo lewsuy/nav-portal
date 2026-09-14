@@ -27,6 +27,18 @@
           </span>
           <span class="admin-menu-label">管理后台</span>
         </a>
+        {% if logged_in %}
+        <a class="admin-menu-item" id="adminLogoutItem" role="menuitem" href="/admin/logout">
+          <span class="admin-menu-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
+              <path d="M10 12h11"></path>
+              <path d="M18 9l3 3l-3 3"></path>
+            </svg>
+          </span>
+          <span class="admin-menu-label">退出登录</span>
+        </a>
+        {% endif %}
       </div>
     </div>
     {% endif %}

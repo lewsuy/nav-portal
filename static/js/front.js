@@ -31,11 +31,22 @@
       dropdown.addEventListener("mouseleave", scheduleHide);
 
       // 「管理后台」菜单项：当前页跳转（<a> 无 target，天然同页）
-      var menuLink = dropdown.querySelector(".admin-menu-item[href]");
+      var menuLink = dropdown.querySelector(".admin-menu-item[href='/admin']");
       if (menuLink) {
         menuLink.addEventListener("click", function () {
           if (hideTimer) clearTimeout(hideTimer);
           dropdown.classList.remove("menu-visible");
+        });
+      }
+
+      // 「退出登录」（仅登录态渲染）：AJAX 退出后刷新当前页，私有分类立即隐藏
+      var logoutItem = document.getElementById("adminLogoutItem");
+      if (logoutItem) {
+        logoutItem.addEventListener("click", function (e) {
+          e.preventDefault();
+          fetch("/admin/logout", { headers: { "X-Requested-With": "XMLHttpRequest" } })
+            .then(function () { location.reload(); })
+            .catch(function () { location.href = "/admin/logout"; });
         });
       }
     }
