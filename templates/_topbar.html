@@ -8,12 +8,27 @@
   <div class="topbar-actions">
     {% include "_theme_switcher.html" %}
     {% if show_admin_link %}
-    <a href="/admin" class="topbar-icon-btn" title="管理后台" aria-label="管理后台">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-      </svg>
-    </a>
+    <div class="theme-dropdown admin-dropdown" id="adminDropdown" {% if logged_in %}data-logged-in="1"{% endif %}>
+      <button type="button" class="theme-trigger" id="adminTrigger" aria-label="管理后台" aria-haspopup="true" aria-expanded="false">
+        <span class="theme-trigger-icon">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </span>
+      </button>
+      <div class="theme-menu" role="menu">
+        <a class="theme-menu-item" role="menuitem" href="/admin">
+          <span class="theme-menu-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </span>
+          <span class="theme-menu-label">管理后台</span>
+        </a>
+      </div>
+    </div>
     {% endif %}
   </div>
 </header>

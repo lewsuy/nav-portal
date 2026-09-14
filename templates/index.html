@@ -39,6 +39,24 @@
   {% endif %}
 </main>
 
+{% if show_admin_link and not logged_in %}
+<div class="front-login-overlay" id="frontLoginOverlay" hidden>
+  <div class="front-login-card" role="dialog" aria-label="管理员登录">
+    <h3>管理员登录</h3>
+    <form id="frontLoginForm" autocomplete="off">
+      <input type="text" id="frontLoginUser" placeholder="用户名" required>
+      <input type="password" id="frontLoginPass" placeholder="密码" required>
+      <div class="front-login-error" id="frontLoginError"></div>
+      <div class="front-login-actions">
+        <button type="button" class="front-login-cancel" id="frontLoginCancel">取消</button>
+        <button type="submit" class="front-login-submit" id="frontLoginSubmit">登录</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
 <script src="/static/js/theme.js"></script>
+<script src="/static/js/front.js"></script>
 </body>
 </html>

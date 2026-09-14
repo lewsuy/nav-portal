@@ -421,3 +421,84 @@ a { color: inherit; text-decoration: none; }
   .content { padding: 8px 16px 40px; }
   .content-standalone { padding: 64px 16px 40px; }
 }
+
+/* ---------- 顶栏管理入口：登录卡片 ---------- */
+
+.front-login-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 18, 34, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+}
+.front-login-overlay[hidden] { display: none; }
+
+.front-login-card {
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 22px 20px;
+  box-shadow: var(--shadow-md);
+}
+.front-login-card h3 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.front-login-card input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 38px;
+  margin-bottom: 12px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13.5px;
+  font-family: var(--font);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.front-login-card input:focus { border-color: var(--accent); }
+
+.front-login-error {
+  min-height: 18px;
+  margin: -4px 0 4px;
+  font-size: 12.5px;
+  line-height: 18px;
+  color: var(--danger);
+  text-align: right;
+}
+
+.front-login-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.front-login-actions button {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.front-login-actions button:hover { background: var(--card-strong); }
+.front-login-actions .front-login-submit {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.front-login-actions .front-login-submit:hover { background: var(--accent-dim, var(--accent)); }
+.front-login-actions button[disabled] { opacity: 0.6; cursor: default; }

@@ -71,7 +71,11 @@ def get_nav_data(include_private=False):
 def index():
     # 未登录时过滤私有分类；登录后（session 中）展示全部
     logged_in = bool(session.get("logged_in"))
-    return render_template("index.html", groups=get_nav_data(include_private=logged_in))
+    return render_template(
+        "index.html",
+        groups=get_nav_data(include_private=logged_in),
+        logged_in=logged_in,
+    )
 
 
 # ---------- 后台登录 ----------
@@ -80,6 +84,19 @@ def index():
 def admin_login():
     error = None
     if request.method == "POST":
+        if request.is_json:
+            # 前台弹窗 AJAX 登录：成功留在当前页，由前端刷新展示私有分类
+            data = request.json or {}
+            username = data.get("username", "")
+            password = data.get("password", "")
+            conn = db.get_db()
+            row = conn.execute("SELECT * FROM admin WHERE id = 1").fetchone()
+            conn.close()
+            if row and username == row["username"] and check_password_hash(row["password_hash"], password):
+                session["logged_in"] = True
+                return jsonify({"ok": True})
+            return jsonify({"error": "用户名或密码错误"}), 400
+
         username = request.form.get("username", "")
         password = request.form.get("password", "")
         conn = db.get_db()
