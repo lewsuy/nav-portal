@@ -1,5 +1,5 @@
 (function () {
-  var HIDE_DELAY = 500; // 与主题菜单一致：鼠标离开后延迟消失
+  var HIDE_DELAY = 100; // 与主题菜单一致：鼠标离开后延迟消失
 
   document.addEventListener("DOMContentLoaded", function () {
     var dropdown = document.getElementById("adminDropdown");
